@@ -1,0 +1,30 @@
+package:
+  name: truetype-tracer
+  version: 2018.08
+
+source:
+  path: ./
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - cmake
+    - pybind11
+    - freetype
+  run:
+    - python
+    - freetype
+
+test:
+   imports:
+       - truetypetracer
+
+about:
+  home: https://github.com/aewallin/truetype-tracer
+  license: GPLv2
+  license_family: GPL
+  summary: Tool to produce font-outline geometry in various output formats such as DXF and GCode
+  description: Tool to produce font-outline geometry in various output formats such as DXF and GCode
