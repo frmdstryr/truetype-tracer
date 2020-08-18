@@ -12,8 +12,10 @@ requirements:
   build:
     - {{ compiler('cxx') }}
     - cmake
-    - pybind11
+
+  host:
     - freetype
+    - pybind11
     - python
 
   run:

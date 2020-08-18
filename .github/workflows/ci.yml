@@ -14,8 +14,8 @@ jobs:
         python-version: ['2.7', '3.6', '3.7', '3.8']
     steps:
       - name: "Clone"
-        uses: actions/checkout@v2
-
+        run: |
+            git clone $GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git
       - name: "Install miniconda"
         uses: goanpeca/setup-miniconda@v1
         with:
