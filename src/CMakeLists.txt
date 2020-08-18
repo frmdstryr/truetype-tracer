@@ -2,22 +2,11 @@ cmake_minimum_required(VERSION 3.12)
 
 Project(truetypetracer)
 
-# this figures out the Python include directories and adds them to the
-# header file search path
-#execute_process(
-#    COMMAND python-config --includes
-#    COMMAND sed -r "s/-I//g; s/ +/;/g"
-#    COMMAND tr -d '\n'
-#    OUTPUT_VARIABLE Python_Includes
-#)
-#include_directories(${Python_Includes})
+# Ex 2.7 or 3.8
+set(PY_VER "$ENV{PY_VER}")
 
-#find_package (PythonLibs $ENV{PY_VERSION} EXACT REQUIRED)
-#include_directories(${PYTHON_INCLUDE_DIRS})
-#MESSAGE(STATUS "Python includes: " ${PYTHON_INCLUDE_DIRS})
-find_package(Python $ENV{PY_VERSION} EXACT COMPONENTS Development)
+find_package(Python ${PY_VER} EXACT REQUIRED Development)
 find_package(pybind11 REQUIRED)
-
 
 find_package(Freetype REQUIRED)
 if( FREETYPE_FOUND )
@@ -55,31 +44,14 @@ set(TTT_INCLUDE_FILES
 ########################################################################
 # this makes the Python module
 pybind11_add_module(truetypetracer ${TTT_SRC_FILES} ttt_py.cpp)
-# add_library(
-#     truetypetracer
-#     MODULE
-#     ${TTT_SRC_FILES}
-#     ttt_py.cpp # the boost-python bindings are here.
-# )
-
-#set_target_properties(truetypetracer PROPERTIES PREFIX "")
-#set_target_properties(truetypetracer PROPERTIES VERSION ${MY_VERSION})
+set_target_properties(truetypetracer PROPERTIES PREFIX "")
+set_target_properties(truetypetracer PROPERTIES VERSION ${MY_VERSION})
 target_link_libraries(truetypetracer PUBLIC ${FREETYPE_LIBRARY})
-
-#
-# this figures out where to install the Python modules
-#
-execute_process(
-    COMMAND python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
-    OUTPUT_VARIABLE Python_site_packages
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
- MESSAGE(STATUS "Python module will be installed to: " ${Python_site_packages})
-# on Ubuntu 11.10 this outputs: /usr/local/lib/python2.7/dist-packages
 
 # strip away /usr/local/  because that is what CMAKE_INSTALL_PREFIX is set to
 # also, since there is no leading "/", it makes ${Python_site_packages} a relative path.
 #STRING(REGEX REPLACE "/usr/local/(.*)$" "\\1" Python_site_packages "${Python_site_packages}" )
+set(Python_site_packages "${CMAKE_INSTALL_PREFIX}/lib/python${PY_VER}/site-packages")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is : " ${CMAKE_INSTALL_PREFIX})
 MESSAGE(STATUS "Python libraries will be installed to: " ${Python_site_packages})
 

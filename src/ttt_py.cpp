@@ -2,6 +2,7 @@
 // January 2012, anders.e.e.wallin "at" gmail.com
 // Ported to use pybind frmdstryr at protonmail
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 #include "ttt.hpp"
@@ -95,6 +96,63 @@ PYBIND11_MODULE(truetypetracer, m) {
         .def(py::init<>())
         .def_property("blockdelete", &NGC_Writer::get_blockdelete, &NGC_Writer::set_blockdelete)
     ;
+
+    py::class_<Point>(m, "Point")
+        .def(py::init<double, double>())
+        .def(py::init<double, double, double, bool, double, double>())
+        .def_readwrite("x", &Point::x)
+        .def_readwrite("y", &Point::y)
+        .def_readwrite("r", &Point::r)
+        .def_readwrite("cw", &Point::cw)
+        .def_readwrite("cx", &Point::cx)
+        .def_readwrite("cy", &Point::cy)
+        .def("__getitem__",[](const Point& self, long i) {
+            switch(i) {
+                case 0:
+                    return py::cast(self.x);
+                case 1:
+                    return py::cast(self.y);
+                case 2:
+                    return py::cast(self.r);
+                case 3:
+                    return py::cast(self.cw);
+                case 4:
+                    return py::cast(self.cx);
+                case 5:
+                    return py::cast(self.cy);
+                default:
+                    throw py::index_error();
+            }
+        })
+        .def("__setitem__",[](Point& self, long i, py::object value) {
+            switch(i) {
+                case 0:
+                    self.x = py::cast<double>(value);
+                    break;
+                case 1:
+                    self.y = py::cast<double>(value);
+                    break;
+                case 2:
+                    self.r = py::cast<double>(value);
+                    break;
+                case 3:
+                    self.cw = py::cast<bool>(value);
+                    break;
+                case 4:
+                    self.cx = py::cast<double>(value);
+                    break;
+                case 5:
+                    self.cy = py::cast<double>(value);
+                    break;
+                default:
+                    throw py::index_error();
+            }
+        })
+    ;
+
+    py::class_<Loop>(m, "Loop");
+    py::class_<Loops>(m, "Loops");
+
     py::class_<SEG_Writer, Writer>(m, "SEG_Writer")
         .def(py::init<>())
         .def("get_loops", &SEG_Writer::get_loops)

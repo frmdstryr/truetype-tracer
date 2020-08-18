@@ -1,6 +1,6 @@
 rm -Rf build
 mkdir build
 cd build
-cmake ../src
+cmake ../src -DCMAKE_INSTALL_PREFIX=$PREFIX
 make
-make install CMAKE_INSTALL_PREFIX=$PREFIX
+make install
