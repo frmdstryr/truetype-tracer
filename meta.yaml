@@ -23,12 +23,8 @@ requirements:
     - freetype
 
 test:
-  files:
-    - py/
-  requires:
-    - pytest ==5.4.3
-  commands:
-    - pytest py/ -v
+  imports:
+    - truetypeparser
 
 about:
   home: https://github.com/aewallin/truetype-tracer
