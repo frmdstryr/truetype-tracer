@@ -26,9 +26,8 @@ test:
   files:
     - py/
   requires:
-    - pytest
+    - pytest ==5.4.3
   commands:
-    - cd $SRC_DIR
     - pytest py/ -v
 
 about:
