@@ -24,7 +24,7 @@ requirements:
 
 test:
   imports:
-    - truetypeparser
+    - truetypetracer
 
 about:
   home: https://github.com/aewallin/truetype-tracer
