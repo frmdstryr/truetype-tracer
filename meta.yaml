@@ -23,12 +23,10 @@ requirements:
     - freetype
 
 test:
-  files:
-    - py/
   requires:
     - pytest
   commands:
-    - pytest py/
+    - pytest
 
 about:
   home: https://github.com/aewallin/truetype-tracer
