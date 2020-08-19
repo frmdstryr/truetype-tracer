@@ -32,13 +32,9 @@ jobs:
         shell: bash -l {0}
         run: |
             mkdir dist/
-            conda build ./ --no-test --output-folder dist/
+            conda build ./ --output-folder dist/
       - name: "Upload package"
         uses: actions/upload-artifact@v1
         with:
-            name: truetype-tracer-py${{ matrix.python-version }}-(${{ matrix.os }})
+            name: truetype-tracer-py${{ matrix.python-version }}-${{ matrix.os }}
             path: dist
-      - name: "Run tests"
-        shell: bash -l {0}
-        run: |
-            conda build dist/*/truetype-tracer-*.tar.bz2 --test --keep-going
