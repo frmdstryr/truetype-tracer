@@ -23,6 +23,8 @@ requirements:
     - freetype
 
 test:
+  source_files:
+    - py
   requires:
     - pytest
   commands:
