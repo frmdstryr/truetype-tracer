@@ -75,8 +75,8 @@ target_link_libraries(libtruetypetracer ${FREETYPE_LIBRARY}) # no need to link w
 install(
     TARGETS libtruetypetracer
     LIBRARY
-    DESTINATION lib/truetypetracer
-    ARCHIVE DESTINATION lib/truetypetracer
+    DESTINATION lib/
+    ARCHIVE DESTINATION lib/
     PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 )
 
