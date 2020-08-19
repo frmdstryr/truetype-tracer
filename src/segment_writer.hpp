@@ -4,9 +4,9 @@
 
 // these are the segments we output
 struct Point {
-    Point(double _x, double _y) : 
+    Point(double _x, double _y) :
      x(_x), y(_y), r(-1), cw(true), cx(0), cy(0) {}
-    Point(double _x, double _y, double _r, bool _cw, double _cx, double _cy) : 
+    Point(double _x, double _y, double _r, bool _cw, double _cx, double _cy) :
      x(_x), y(_y), r(_r), cw(_cw), cx(_cx), cy(_cy) {}
     double x;
     double y;
@@ -14,6 +14,11 @@ struct Point {
     bool cw;
     double cx;
     double cy;
+
+    bool operator==(const Point& other) const {
+        return (x == other.x && y == other.y && r == other.r &&
+                cw == other.cw && cx == other.cx && cy == other.cy);
+    }
 };
 
 typedef std::vector<Point> Loop;
@@ -34,7 +39,7 @@ public:
     virtual void postamble(long int offset, extents line_extents) {
         std::cout << "(postamble)\n";
     }
-    
+
     virtual void move_comment(P p) {}
     virtual void move_to(P p) {
         if ( !current_loop.empty() ) {
@@ -46,7 +51,7 @@ public:
         std::cout << "pen DOWN \n";
         append_point(p);
     }
-    
+
     virtual void line(P p) {
         std::cout << last_point.x << " , " << last_point.y << " line " <<p.x << " , " << p.y << "\n";
         append_point(p);
@@ -56,12 +61,12 @@ public:
         std::cout << last_point.x << " , " << last_point.y << " lineto " << p.x << " , " << p.y << "\n";
         append_point(p);
     }
-    
+
     virtual void cubic_comment(P c1, P c2, P to) {
         std::cout << "(cubic)\n";
     }
     virtual void cubic_to(P c1, P c2, P to) {}
-    
+
     virtual void conic_comment(P to, P diff) {
         std::cout << "(conic)\n";
     }
@@ -72,13 +77,13 @@ public:
     //virtual void arc_small_den(P p) {} // dxf_writer lacks this functn!
     virtual void arc(P p2, double r, P c, double gr, double bulge) {
         append_arc(p2,r,c);
-    } 
-    
+    }
+
     virtual void start_glyph(const char* s, wchar_t wc, long int offset) {
         if(isalnum(*s))
-            std::cout << "(start of symbol " << (char)wc << ")\n"; 
+            std::cout << "(start of symbol " << (char)wc << ")\n";
         else
-            std::cout << "(start of symbol 0x"<< std::hex << wc << std::dec <<")\n"; 
+            std::cout << "(start of symbol 0x"<< std::hex << wc << std::dec <<")\n";
     }
     virtual void end_glyph(extents glyph_extents, FT_Vector advance) {
         if ( !current_loop.empty() ) {

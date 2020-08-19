@@ -23,8 +23,10 @@ requirements:
     - freetype
 
 test:
-   imports:
-       - truetypetracer
+  requires:
+    - pytest
+  commands:
+    - pytest py/
 
 about:
   home: https://github.com/aewallin/truetype-tracer

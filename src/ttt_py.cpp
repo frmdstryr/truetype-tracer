@@ -3,6 +3,7 @@
 // Ported to use pybind frmdstryr at protonmail
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 
 namespace py = pybind11;
 #include "ttt.hpp"
@@ -106,6 +107,7 @@ PYBIND11_MODULE(truetypetracer, m) {
         .def_readwrite("cw", &Point::cw)
         .def_readwrite("cx", &Point::cx)
         .def_readwrite("cy", &Point::cy)
+        .def(py::self == py::self)
         .def("__getitem__",[](const Point& self, long i) {
             switch(i) {
                 case 0:
@@ -150,8 +152,8 @@ PYBIND11_MODULE(truetypetracer, m) {
         })
     ;
 
-    py::class_<Loop>(m, "Loop");
-    py::class_<Loops>(m, "Loops");
+    py::bind_vector<Loop>(m, "Loop");
+    py::bind_vector<Loops>(m, "Loops");
 
     py::class_<SEG_Writer, Writer>(m, "SEG_Writer")
         .def(py::init<>())

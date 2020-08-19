@@ -1,5 +1,10 @@
+import sys
 import truetypetracer as ttt
-import ConfigParser
+
+if sys.version_info.major == 2:
+    import ConfigParser as configparser
+else:
+    import configparser
 
 
 def ttt_geometry(text_string="TEST", text_scale=1, subdiv=10):
@@ -10,23 +15,23 @@ def ttt_geometry(text_string="TEST", text_scale=1, subdiv=10):
     wr.arc = False
     wr.conic = False
     wr.cubic = False
-    
+
     wr.conic_biarc_subdivision = 10  # this has no effect?
     wr.conic_line_subdivision = subdiv  # this increasesn nr of points to 366
     wr.cubic_biarc_subdivision = 10  # no effect?
     wr.cubic_line_subdivision = 10  # no effect?
     #wr.setFont(2)
-    
-    s3 = ttt.ttt(text_string,wr)
-    print s3
+
+    s3 = ttt.ttt(text_string, wr)
+    print(s3)
     segments = wr.get_segments()
-    # format is 
+    # format is
     # (x, y, r, cw(bool), cx, cy)
     #e = wr.extents
-    print "number of loops ",len(segments)
+    print("number of loops %s" % len(segments))
     return segments
-    
-    
+
+
 def vertex_idx_generator():
     """ unique integer index for each vertex
     """
@@ -36,86 +41,86 @@ def vertex_idx_generator():
         yield idx
         idx = idx+1
 
+
 def format_segments(segments):
     """ format segments from ttt into a better format
     """
-
-
-    n_loop=0
+    n_loop = 0
     idx_gen = vertex_idx_generator()
-    
+
     vertices = {}
     line_segments = []
-        
+
     for loop in segments:
         first_pt = loop[0]
         last_pt = loop[-1]
         assert first_pt == last_pt
-        loop.pop() # remove last point, since it is the same as the first.
-        
+        loop.pop()  # remove last point, since it is the same as the first.
 
-        
+
+
         #previous_idx = idx_gen.next()
         #vertices[ previous_idx ] = loop[-1]
         #current_idx = idx_gen.next()
         #vertices[ current_idx ] = loop[0]
-        
+
         #line_segments.append( (previous_idx, current_idx) )
-        idxs=[]
+        idxs = []
         for pt in loop:
-            current_idx = idx_gen.next()
-            vertices[ current_idx ] = pt
+            current_idx = next(idx_gen)
+            vertices[current_idx] = pt
             idxs.append(current_idx)
-            
+
         for n in range(len(idxs)):
-            
-            line_segments.append( ( idxs[n-1], idxs[n]) )
+            line_segments.append((idxs[n-1], idxs[n]))
 
             #previous_idx = current_idx
             #print idx_gen.next()
-        print "loop ", n_loop, "ok"
+        print("loop %s ok" % n_loop)
 
         #break
-        n_loop=n_loop+1
+        n_loop = n_loop+1
     return vertices, line_segments, n_loop
-    
+
+
 def config_writer(fname, text_string, num_loops, scale, subdiv, vertices, line_segments):
-    config = ConfigParser.ConfigParser()
-    cfgfile = open(fname,'w')
+    config = configparser.ConfigParser()
+    cfgfile = open(fname, 'w')
     #print "vertices"
     config.add_section('Info')
-    config.set('Info','program', str('TrueTypeTracer'))
-    config.set('Info','program_version', str(ttt.version()))
-    config.set('Info','url', str('https://github.com/aewallin/truetype-tracer'))
-    config.set('Info','Text', str(text_string))
-    config.set('Info','num_loops', str(num_loops))
-    config.set('Info','scale', str(scale))
-    config.set('Info','subdiv', str(subdiv))
-    config.set('Info','num_pointsites', str(len(vertices)))
-    config.set('Info','num_linesites', str(len(line_segments)))
-    
+    config.set('Info', 'program', str('TrueTypeTracer'))
+    config.set('Info', 'program_version', str(ttt.version()))
+    config.set('Info', 'url', str('https://github.com/aewallin/truetype-tracer'))
+    config.set('Info', 'Text', str(text_string))
+    config.set('Info', 'num_loops', str(num_loops))
+    config.set('Info', 'scale', str(scale))
+    config.set('Info', 'subdiv', str(subdiv))
+    config.set('Info', 'num_pointsites', str(len(vertices)))
+    config.set('Info', 'num_linesites', str(len(line_segments)))
+
     config.add_section('PointSites')
     for p in vertices:
-        print p, vertices[p]
-        config.set('PointSites',str(p), str( (vertices[p][0], vertices[p][1]) ))
+        print("%s %s" % (p, vertices[p]))
+        config.set('PointSites', str(p), str( (vertices[p][0], vertices[p][1]) ))
     #print "line segments"
     config.add_section('LineSites')
-    n_line=0
+    n_line = 0
     for p in line_segments:
-        config.set('LineSites',str(n_line), str( (p[0], p[1]) ))
-        print p, vertices[p[0]],"-",vertices[p[1]]
-        n_line=n_line+1
+        config.set('LineSites', str(n_line), str((p[0], p[1])))
+        print("%s %s-%s" % (p, vertices[p[0]], vertices[p[1]]))
+        n_line = n_line+1
     config.add_section('End')
     config.write(cfgfile)
     cfgfile.close()
 
-if __name__=="__main__":
-    txt="TEST"
-    scale=1
+
+def test_textwriter():
+    txt = "TEST"
+    scale = 1
     subdiv = 100
     segs = ttt_geometry(txt, scale, subdiv)
     verts, lines, n_loops = format_segments(segs)
-    fname="a.ini"
+    fname = "a.ini"
     config_writer(fname, txt, n_loops, scale, subdiv, verts, lines)
 
 #print e
